@@ -13,11 +13,11 @@ function marketo_field_admin_form($form_state, $form_id) {
     '#description' => t('The URL to your forms2.js file.<br> (Usually something like <tt>//app-XYZ.marketo.com/js/forms2/js/forms2.js</tt>.)'),
     '#default_value' => variable_get('marketo_field_remote_js'),
   );
-  $form['marekto_field_hostname'] = array(
+  $form['marketo_field_hostname'] = array(
     '#type' => 'textfield',
     '#title' => t('Marketo application hostname'),
     '#description' => t('The hostname for your Marketo forms.<br> (Usually something like <tt>//app-XYZ.marketo.com</tt>.)'),
-    '#default_value' => variable_get('marekto_field_hostname'),
+    '#default_value' => variable_get('marketo_field_hostname'),
   );
   $form['marketo_field_account'] = array(
     '#type' => 'textfield',

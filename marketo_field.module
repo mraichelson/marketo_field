@@ -64,7 +64,7 @@ function marketo_field_field_formatter_view($entity_type, $entity, $field, $inst
     case 'marketo_field':
       // Get configuration settings set using admin UI.
       $mf_remote = variable_get('marketo_field_remote_js');
-      $mf_hostname = variable_get('marekto_field_hostname');
+      $mf_hostname = variable_get('marketo_field_hostname');
       $mf_account = variable_get('marketo_field_account');
       $mf_use_sitewide = variable_get('marketo_field_use_sitewide_js');
       $mf_sitewide_js = variable_get('marketo_field_sitewide_js');
@@ -176,7 +176,7 @@ function _marketo_field_admin_configured() {
   // to operate properly.
   $config_vars = array(
     'marketo_field_remote_js',
-    'marekto_field_hostname',
+    'marketo_field_hostname',
     'marketo_field_account',
   );
   foreach ($config_vars as $var) {
