@@ -40,7 +40,6 @@ function marketo_field_field_formatter_info() {
     'marketo_field' => array(
       'label' => t('Marketo form'),
       'field types' => array('number_integer', 'text'),
-      // @TODO: provide settings options for additional JS code injection.
       'settings' => array(
         'marketo_field_javascript' => '',
       ),
@@ -54,7 +53,7 @@ function marketo_field_field_formatter_info() {
 function marketo_field_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
   if (!_marketo_field_admin_configured()) {
     drupal_set_message('Marketo field admin settings are not configured, forms will not be displayed.');
-    return false;
+    return FALSE;
   }
   // Field formatter config settings
   $element = array();
@@ -136,7 +135,6 @@ function marketo_field_field_formatter_settings_summary($field, $instance, $view
   else {
     $summary = t('This field uses custom JavaScript behaviors.');
   }
-  
   return $summary;
 }
 
