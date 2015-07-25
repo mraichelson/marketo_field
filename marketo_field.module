@@ -62,6 +62,11 @@ function marketo_field_field_formatter_view($entity_type, $entity, $field, $inst
 
   switch ($display['type']) {
     case 'marketo_field':
+      // Get configuration settings set using admin UI.
+      $mf_remote = variable_get('marketo_field_remote_js');
+      $mf_hostname = variable_get('marekto_field_hostname');
+      $mf_account = variable_get('marketo_field_account');
+
       // @TODO: move this markup to a TPL that can be driven with hook_theme().
       // * Remote JavaScript that gets added to the page. Does some auto-detection
       //   to avoid including the remote script file more than once (which causes
@@ -71,7 +76,7 @@ function marketo_field_field_formatter_view($entity_type, $entity, $field, $inst
       $marketo_js[] =   'document.write(';
       $marketo_js[] =     '"<" + "script " +';
       // @TODO: this will need to load from admin settings.
-      $marketo_js[] =     '"src=\"//app-foo.marketo.com/js/forms2/js/forms2.js\">" +';
+      $marketo_js[] =     '"src=\"' . $mf_remote . '\">" +';
       $marketo_js[] =     '"</" + "script>"';
       $marketo_js[] =   ');';
       $marketo_js[] = '}';
@@ -86,8 +91,8 @@ function marketo_field_field_formatter_view($entity_type, $entity, $field, $inst
         $field_markup[] = '<div id="mktoForm_' . $form_id . '"></div>';
         $field_markup[] = '<script>';
         $field_markup[] =   'MktoForms2.loadForm(';
-        $field_markup[] =     '"//app-foo.marketo.com", '; // @TODO: make this dynamic (system setting)
-        $field_markup[] =     '"123-ABC-456", '; // @TODO: make this dynamic (system setting)
+        $field_markup[] =     '"' . $mf_hostname . '", '; // @TODO: make this dynamic (system setting)
+        $field_markup[] =     '"' . $mf_account . '", '; // @TODO: make this dynamic (system setting)
         $field_markup[] =     $form_id;
         if (!empty($settings['marketo_field_javascript'])) {
           $field_markup[] =   ', function(form) {';
@@ -119,7 +124,7 @@ function marketo_field_field_formatter_settings_form($field, $instance, $view_mo
     '#title' => t('Custom JavaScript callback'),
     '#default_value' => $settings['marketo_field_javascript'],
     '#required' => FALSE,
-    '#description' => t('JavaScript code here will be added in a custom callback as defined in the Marketo Forms2 API documentation (available online here).'),
+    '#description' => t('JavaScript code here will be added in a custom callback as defined in the Marketo Forms2 API documentation. (Code entered here will override any site-wide settings made through the main admin UI.)'),
   );
   return $element;
 }
@@ -158,6 +163,18 @@ function marketo_field_help($path, $arg) {
  *   Returns true if the settings have been properly configured.
  */
 function _marketo_field_admin_configured() {
-  // @TODO: implement this for real.
-  return true;
+  $config_status = TRUE;
+  // These are the necessary configuration variables that Marketo forms need
+  // to operate properly.
+  $config_vars = array(
+    'marketo_field_remote_js',
+    'marekto_field_hostname',
+    'marketo_field_account',
+  );
+  foreach ($config_vars as $var) {
+    if (!variable_get($var)) {
+      $config_status = FALSE;
+    }
+  }
+  return $config_status;
 }
