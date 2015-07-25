@@ -66,6 +66,8 @@ function marketo_field_field_formatter_view($entity_type, $entity, $field, $inst
       $mf_remote = variable_get('marketo_field_remote_js');
       $mf_hostname = variable_get('marekto_field_hostname');
       $mf_account = variable_get('marketo_field_account');
+      $mf_use_sitewide = variable_get('marketo_field_use_sitewide_js');
+      $mf_sitewide_js = variable_get('marketo_field_sitewide_js');
 
       // @TODO: move this markup to a TPL that can be driven with hook_theme().
       // * Remote JavaScript that gets added to the page. Does some auto-detection
@@ -97,6 +99,13 @@ function marketo_field_field_formatter_view($entity_type, $entity, $field, $inst
           $field_markup[] =   ', function(form) {';
           $field_markup[] =     $settings['marketo_field_javascript'];
           $field_markup[] =   '}';
+        }
+        else {
+          if ($mf_use_sitewide && $mf_sitewide_js) {
+            $field_markup[] =   ', function(form) {';
+            $field_markup[] =     $mf_sitewide_js;
+            $field_markup[] =   '}';
+          }
         }
         $field_markup[] =   ');';
         $field_markup[] = '</script>';
