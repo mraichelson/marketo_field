@@ -1,0 +1,7 @@
+name = Marketo Field
+description = Provides a field formatter for integer fields that will render a form built using the Marketo Forms2 system.
+core = 7.x
+configure = admin/config/development/marketo-field
+package = Other
+
+dependencies[] = field

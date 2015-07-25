@@ -1,0 +1,14 @@
+<?php
+/**
+ * @file
+ */
+
+/**
+ * Implements hook_install().
+ */
+function marketo_field_install() {
+  // Set a message to tell people to configure their 
+  // Marketo account information.
+  $message_text = t('The Marketo field module has been installed. Please set up your account config information in the admin UI.');
+  drupal_set_message($message_text, 'warning');
+}

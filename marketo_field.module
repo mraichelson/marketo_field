@@ -1,0 +1,164 @@
+<?php
+/**
+ * @file
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function marketo_field_menu() {
+  $items['admin/config/development/marketo-field'] = array(
+    'title' => 'Marketo Account Information',
+    'description' => t('Adjust Marketo account integration settings.'),
+    'page callback' => '_page_marketo_field_admin',
+    'page arguments' => array(),
+    'access arguments' => array('marketo_field'),
+    'type' => MENU_NORMAL_ITEM,
+    'file path' => drupal_get_path('module', 'marketo_field') . '/pages',
+    'file' => 'admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function marketo_field_permission() {
+  return array(
+    'marketo_field' =>  array(
+      'title' => t('Administer Marketo account settings'),
+      'description' => t('Control the Marketo account configuration used by the marketo_field module.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function marketo_field_field_formatter_info() {
+  return array(
+    'marketo_field' => array(
+      'label' => t('Marketo form'),
+      'field types' => array('number_integer', 'text'),
+      // @TODO: provide settings options for additional JS code injection.
+      'settings' => array(
+        'marketo_field_javascript' => '',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function marketo_field_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  if (!_marketo_field_admin_configured()) {
+    drupal_set_message('Marketo field admin settings are not configured, forms will not be displayed.');
+    return false;
+  }
+  // Field formatter config settings
+  $element = array();
+  $settings = $display['settings'];
+
+  switch ($display['type']) {
+    case 'marketo_field':
+      // @TODO: move this markup to a TPL that can be driven with hook_theme().
+      // * Remote JavaScript that gets added to the page. Does some auto-detection
+      //   to avoid including the remote script file more than once (which causes
+      //   JS errors).
+      $marketo_js = array();
+      $marketo_js[] = 'if (typeof MktoForms2 !== "object") {';
+      $marketo_js[] =   'document.write(';
+      $marketo_js[] =     '"<" + "script " +';
+      // @TODO: this will need to load from admin settings.
+      $marketo_js[] =     '"src=\"//app-foo.marketo.com/js/forms2/js/forms2.js\">" +';
+      $marketo_js[] =     '"</" + "script>"';
+      $marketo_js[] =   ');';
+      $marketo_js[] = '}';
+
+      drupal_add_js(implode("\n", $marketo_js), 'inline');
+
+      foreach ($items as $delta => $item) {
+        $form_id = $item['value'];
+
+        // @TODO: move this markup to an TPL that can be driven with hook_theme().
+        $field_markup   = array();
+        $field_markup[] = '<div id="mktoForm_' . $form_id . '"></div>';
+        $field_markup[] = '<script>';
+        $field_markup[] =   'MktoForms2.loadForm(';
+        $field_markup[] =     '"//app-foo.marketo.com", '; // @TODO: make this dynamic (system setting)
+        $field_markup[] =     '"123-ABC-456", '; // @TODO: make this dynamic (system setting)
+        $field_markup[] =     $form_id;
+        if (!empty($settings['marketo_field_javascript'])) {
+          $field_markup[] =   ', function(form) {';
+          $field_markup[] =     $settings['marketo_field_javascript'];
+          $field_markup[] =   '}';
+        }
+        $field_markup[] =   ');';
+        $field_markup[] = '</script>';
+
+        $element[$delta] = array(
+          '#attributes' => array('class' => array('marketo-field')),
+          '#markup' => implode('', $field_markup),
+        );
+      }
+      break;
+  }
+  return $element;
+}
+
+/**
+ * Implements hook_field_formatter_settings_form().
+ */
+function marketo_field_field_formatter_settings_form($field, $instance, $view_mode, $form, &$form_state) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+  $element = array();
+  $element['marketo_field_javascript'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Custom JavaScript callback'),
+    '#default_value' => $settings['marketo_field_javascript'],
+    '#required' => FALSE,
+    '#description' => t('JavaScript code here will be added in a custom callback as defined in the Marketo Forms2 API documentation (available online here).'),
+  );
+  return $element;
+}
+
+/**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function marketo_field_field_formatter_settings_summary($field, $instance, $view_mode) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+  if (empty($settings['marketo_field_javascript'])) {
+    $summary = t('Optional: Add custom Marketo Forms2 JavaScript behaviors for this field.');
+  }
+  else {
+    $summary = t('This field uses custom JavaScript behaviors.');
+  }
+  
+  return $summary;
+}
+
+/**
+ * Implements hook_help().
+ */
+function marketo_field_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#marketo_field':
+      // @TODO: write help content.
+      return '<p>' . t('This will be help content for the marketo_field module.') . '</p>';
+  }
+}
+
+/**
+ * Helper function to determine if the admin settings for Marketo integration
+ * have been configured or not.
+ *
+ * @return boolean
+ *   Returns true if the settings have been properly configured.
+ */
+function _marketo_field_admin_configured() {
+  // @TODO: implement this for real.
+  return true;
+}
