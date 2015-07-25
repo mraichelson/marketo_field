@@ -75,7 +75,6 @@ function marketo_field_field_formatter_view($entity_type, $entity, $field, $inst
       $marketo_js[] = 'if (typeof MktoForms2 !== "object") {';
       $marketo_js[] =   'document.write(';
       $marketo_js[] =     '"<" + "script " +';
-      // @TODO: this will need to load from admin settings.
       $marketo_js[] =     '"src=\"' . $mf_remote . '\">" +';
       $marketo_js[] =     '"</" + "script>"';
       $marketo_js[] =   ');';
@@ -91,8 +90,8 @@ function marketo_field_field_formatter_view($entity_type, $entity, $field, $inst
         $field_markup[] = '<div id="mktoForm_' . $form_id . '"></div>';
         $field_markup[] = '<script>';
         $field_markup[] =   'MktoForms2.loadForm(';
-        $field_markup[] =     '"' . $mf_hostname . '", '; // @TODO: make this dynamic (system setting)
-        $field_markup[] =     '"' . $mf_account . '", '; // @TODO: make this dynamic (system setting)
+        $field_markup[] =     '"' . $mf_hostname . '", ';
+        $field_markup[] =     '"' . $mf_account . '", ';
         $field_markup[] =     $form_id;
         if (!empty($settings['marketo_field_javascript'])) {
           $field_markup[] =   ', function(form) {';
