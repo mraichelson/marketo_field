@@ -28,6 +28,7 @@ function marketo_field_permission() {
     'marketo_field' =>  array(
       'title' => t('Administer Marketo account settings'),
       'description' => t('Control the Marketo account configuration used by the marketo_field module.'),
+      'restrict access' => TRUE,
     ),
   );
 }
