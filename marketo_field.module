@@ -87,6 +87,10 @@ function marketo_field_field_formatter_view($entity_type, $entity, $field, $inst
       foreach ($items as $delta => $item) {
         $form_id = $item['value'];
 
+        // @TODO: since there's still support for text fields figure out what to
+        // do when $form_id is non-numeric (like if someone typed in text rather
+        // than a numeric ID).
+
         // @TODO: move this markup to an TPL that can be driven with hook_theme().
         $field_markup   = array();
         $field_markup[] = '<div id="mktoForm_' . $form_id . '"></div>';
